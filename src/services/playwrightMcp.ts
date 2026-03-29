@@ -20,9 +20,8 @@ export async function getPlaywrightMcpClient(): Promise<Client> {
       "--isolated",
       "--browser",
       "chromium",
-      "--",
-      "--no-sandbox",
-      "--disable-dev-shm-usage",
+      "--config",
+      "./playwright-mcp-config.json",
     ],
   });
 
