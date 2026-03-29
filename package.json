@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.28.0",
+    "@playwright/mcp": "^0.0.68",
     "@prisma/client": "^5.22.0",
     "date-fns": "^4.1.0",
     "next": "16.2.1",

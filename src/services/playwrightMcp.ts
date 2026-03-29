@@ -13,8 +13,8 @@ export async function getPlaywrightMcpClient(): Promise<Client> {
   }
 
   const transport = new StdioClientTransport({
-    command: "npx",
-    args: ["@playwright/mcp@latest", "--headless", "--isolated"],
+    command: "node",
+    args: ["./node_modules/@playwright/mcp/cli.js", "--headless", "--isolated"],
   });
 
   mcpClient = new Client({ name: "ai-blog-researcher", version: "1.0.0" });
