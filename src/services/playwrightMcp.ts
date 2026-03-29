@@ -14,7 +14,12 @@ export async function getPlaywrightMcpClient(): Promise<Client> {
 
   const transport = new StdioClientTransport({
     command: "node",
-    args: ["./node_modules/@playwright/mcp/cli.js", "--headless", "--isolated"],
+    args: [
+      "./node_modules/@playwright/mcp/cli.js",
+      "--headless",
+      "--isolated",
+      "--chromium-sandbox=false",
+    ],
   });
 
   mcpClient = new Client({ name: "ai-blog-researcher", version: "1.0.0" });
