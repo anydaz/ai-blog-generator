@@ -13,6 +13,9 @@
 # testing
 /coverage
 
+# snapshots
+.snapshots/
+
 # next.js
 /.next/
 /out/

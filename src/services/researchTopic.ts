@@ -4,10 +4,36 @@ import type {
   ChatCompletionMessageParam,
   ChatCompletionTool,
 } from "openai/resources/chat/completions";
+import * as fs from "fs";
+import * as path from "path";
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
+
+// Create a temporary directory for snapshots
+const SNAPSHOTS_DIR = path.join(process.cwd(), ".snapshots");
+
+function ensureSnapshotsDir() {
+  if (!fs.existsSync(SNAPSHOTS_DIR)) {
+    fs.mkdirSync(SNAPSHOTS_DIR, { recursive: true });
+  }
+}
+
+function cleanupSnapshots() {
+  try {
+    if (fs.existsSync(SNAPSHOTS_DIR)) {
+      const files = fs.readdirSync(SNAPSHOTS_DIR);
+      for (const file of files) {
+        fs.unlinkSync(path.join(SNAPSHOTS_DIR, file));
+      }
+      fs.rmdirSync(SNAPSHOTS_DIR);
+      console.log("[Research] Cleaned up snapshots directory");
+    }
+  } catch (error) {
+    console.warn("[Research] Warning: Could not cleanup snapshots:", error);
+  }
+}
 
 /**
  * Uses Playwright MCP + OpenAI to autonomously research a topic on the web.
@@ -15,6 +41,7 @@ const openai = new OpenAI({
  * search, read pages, and extract useful information.
  */
 async function researchTopic(topic: string): Promise<string> {
+  ensureSnapshotsDir();
   const client = await getPlaywrightMcpClient();
 
   try {
@@ -91,6 +118,7 @@ Browse the web, visit multiple sources, and gather comprehensive information. In
         !choice.message.tool_calls?.length
       ) {
         console.log("[Research] LLM finished research");
+        cleanupSnapshots();
         return choice.message.content || "No research data collected.";
       }
 
@@ -162,12 +190,14 @@ Browse the web, visit multiple sources, and gather comprehensive information. In
       temperature: 0.3,
     });
 
+    cleanupSnapshots();
     return (
       finalResponse.choices[0]?.message?.content ||
       "No research data collected."
     );
   } catch (error) {
     console.error("[Research] Error during research:", error);
+    cleanupSnapshots();
     throw error;
   }
 }
