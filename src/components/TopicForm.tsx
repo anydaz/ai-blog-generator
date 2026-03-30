@@ -9,9 +9,8 @@ interface TopicFormProps {
 
 const STEPS = [
   { step: 1, label: "Searching the web with Playwright..." },
-  { step: 2, label: "Analyzing sources with AI..." },
-  { step: 3, label: "Writing blog post..." },
-  { step: 4, label: "Saving to database..." },
+  { step: 2, label: "Writing blog post..." },
+  { step: 3, label: "Saving to database..." },
 ];
 
 export default function TopicForm({ onGenerated }: TopicFormProps) {

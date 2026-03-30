@@ -56,24 +56,18 @@ export async function POST(request: NextRequest) {
             research = "";
           }
 
-          // Step 2: Analyze
+          // Step 2: Generate
           send("progress", {
             step: 2,
-            message: "Analyzing sources with AI...",
-          });
-
-          // Step 3: Generate
-          send("progress", {
-            step: 3,
             message: "Writing blog post...",
           });
           console.log("[Generate] Generating blog post...");
           const generated = await generateBlogPost(topic.trim(), research);
           console.log(`[Generate] Generated: "${generated.title}"`);
 
-          // Step 4: Save
+          // Step 3: Save
           send("progress", {
-            step: 4,
+            step: 3,
             message: "Saving to database...",
           });
 
