@@ -47,8 +47,11 @@ async function researchTopic(topic: string): Promise<string> {
   try {
     // 2. Get available browser tools and convert to OpenAI format
     const { tools: mcpTools } = await client.listTools();
+    const nonInstallTools = mcpTools.filter(
+      (tool) => !tool.name.toLowerCase().includes("install"),
+    );
 
-    const openaiTools: ChatCompletionTool[] = mcpTools.map((tool) => ({
+    const openaiTools: ChatCompletionTool[] = nonInstallTools.map((tool) => ({
       type: "function" as const,
       function: {
         name: tool.name,
@@ -126,6 +129,15 @@ Browse the web, visit multiple sources, and gather comprehensive information. In
       for (const toolCall of choice.message.tool_calls) {
         if (toolCall.type !== "function") continue;
         const toolName = toolCall.function.name;
+        if (toolName.toLowerCase().includes("install")) {
+          messages.push({
+            role: "tool",
+            tool_call_id: toolCall.id,
+            content:
+              "Skipped: install-related browser tools are disabled in this environment.",
+          });
+          continue;
+        }
         let toolArgs: Record<string, unknown>;
         try {
           toolArgs = JSON.parse(toolCall.function.arguments);
